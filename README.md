@@ -1,2 +1,90 @@
 Welcome to S.A.S.S.I!
 This project is based in terminal using python but i have made a live site for it!
+
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <title>S.A.S.S.I. Gatekeeper Dashboard</title>
+    <link rel="stylesheet" href="https://jsdelivr.net" />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script src="https://jsdelivr.net"></script>
+    <script>
+      stlite.mount({
+        requirements: ["tree-sitter", "tree-sitter-python"],
+        entrypoint: "sassi_engine.py",
+        files: {
+          "sassi_engine.py": `
+import random
+import streamlit as st
+import tree_sitter_python as tspython
+from tree_sitter import Language, Parser
+
+PY_LANG = Language(tspython.language())
+parser = Parser(language=PY_LANG)
+
+BANNED_TOKENS = {"os", "subprocess", "eval", "exec", "open", "system", "shutil"}
+ROASTS = [
+    "Nice try, Dr. Hackerman. Submission denied.",
+    "My grandmother writes cleaner code, and she's a ceramic cat.",
+    "Syntax violation detected. Please go sit in the corner and think about your life.",
+    "This code looks like it was written by an caffeinated squirrel on a broken keyboard.",
+    "Security breach blocked. I have logged your IP address and told your mother."
+]
+
+def map_and_roast_tree(node, source_bytes, depth=0, result_lines=None):
+    node_text = source_bytes[node.start_byte:node.end_byte].decode("utf8").strip()
+    indent = "  " * depth
+    line = f"{indent}┠─┨ [{node.type}] -> {node_text[:40]}"
+    if result_lines is not None:
+        result_lines.append(line)
+    if node.type in ("identifier", "string") and node_text in BANNED_TOKENS:
+        raise PermissionError(f"CRITICAL: Banned entity '{node_text}' detected at line {node.start_point + 1}!")
+    for child in node.children:
+        map_and_roast_tree(child, source_bytes, depth + 1, result_lines)
+
+def scan_code(raw_user_code):
+    source_bytes = raw_user_code.encode("utf8")
+    syntax_tree = parser.parse(source_bytes)
+    root = syntax_tree.root_node
+    result_lines = []
+    if root.has_error:
+        return {"ok": False, "status": "rejected", "summary": "Code structure is corrupted.", "details": ["Syntax errors were detected."]}
+    try:
+        map_and_roast_tree(root, source_bytes, depth=0, result_lines=result_lines)
+        return {"ok": True, "status": "passed", "summary": "Code logic cleared.", "details": result_lines}
+    except PermissionError as secure_error:
+        return {"ok": False, "status": "security_block", "summary": "Security block detected.", "details": [str(secure_error), random.choice(ROASTS)]}
+
+st.set_page_config(page_title="S.A.S.S.I. Gatekeeper", page_icon="🛡️", layout="centered")
+st.title("🛡️ S.A.S.S.I. Secure Gateway")
+st.subheader("Interactive WebAssembly Deployment Panel")
+
+user_code = st.text_area("Target Python Code Workspace", height=250, placeholder="def test():\\n    print('Hello World')")
+
+if st.button("Initialize Scan Protocol", type="primary"):
+    if not user_code.strip():
+        st.warning("⚠️ No code provided.")
+    else:
+        result = scan_code(user_code)
+        st.divider()
+        if result["ok"]:
+            st.success("✅ Code logic cleared.")
+            with st.expander("View Genome Map", expanded=True):
+                st.code("\\n".join(result["details"]), language="text")
+        else:
+            st.error(f"🚨 {result['summary']}")
+            st.warning(result["details"])
+            if len(result["details"]) > 1:
+                st.markdown(f"**Roast:** *\\"{result['details']}\\"*")
+`
+        }
+      }, document.getElementById("root"));
+    </script>
+  </body>
+</html>
