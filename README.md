@@ -1,4 +1,4 @@
-# S.A.S.S.I. — Static Analysis Script Security Inspector 🛡️🐈
+# S.A.S.S.I. — Static Analysis Script Security Inspector 🛡️
 
 S.A.S.S.I. is a fully local, zero-dependency python script safety inspector built explicitly for the **M5Stack Cardputer ADV** as part of the Hack Club Portputer YSWS. 
 
@@ -6,15 +6,15 @@ It lets you pop in a MicroSD card containing Python code files, use your physica
 
 ---
 
-## 🛠️ Features
-* **100% Local Processing:** Runs entirely on-device without needing internet connectivity or a companion computer.
+##  Features
+* **100% Local Processing:** Runs entirely on-device without needing internet connectivity or a companion system!!!!.
 * **Dynamic Screen Navigation:** Scroll-safe file viewer maps your SD root directory instantly, adapting smoothly with viewport tracking loops.
 * **Static Token Chasing:** Catches complex or dangerous structural tokens like `os`, `subprocess`, `eval`, `exec`, `open`, `system`, and `shutil`.
 * **Hardware Audio Feedback:** Uses the native Cardputer speaker PWM clock to alert you with high-low alarm loops (on failure) or smooth chirps (on passing).
 
 ---
 
-## 📂 Hardware Setup & Pinout
+##  Hardware Setup & Pinout
 Ensure your MicroSD card is formatted to **FAT32** and has a few `.py` files sitting right at the root directory level.
 
 This project relies on the native **Cardputer ADV SPI node layout**:
@@ -25,7 +25,7 @@ This project relies on the native **Cardputer ADV SPI node layout**:
 
 ---
 
-## 🚀 Flashing via Arduino IDE
+##  Flashing via Arduino IDE
 
 ### 1. Library Dependencies
 Before clicking upload, make sure you have installed these exact official libraries via the **Arduino Library Manager**:
@@ -40,7 +40,7 @@ Before clicking upload, make sure you have installed these exact official librar
 
 ---
 
-## 🕹️ How to Use It
+##  How to Use It
 1. Use **`W`** (Up) and **`S`** (Down) on your physical keyboard to move the selector cursor.
 2. Press **`Enter`** to initialize a code target sweep scan.
 3. Once the scan is complete, press **any key** on the keyboard matrix layout to exit back to the file manager explorer.
